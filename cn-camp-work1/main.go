@@ -18,7 +18,6 @@ func logHandler(h http.Handler) http.Handler {
 		h.ServeHTTP(w, r)
 		reqUrl := r.URL.String()
 		method := r.Method
-		//t:= reflect.TypeOf(w)
 		vals := reflect.ValueOf(w)
 		iv := reflect.Indirect(vals)
 		statusCode := iv.FieldByName("status")
