@@ -16,7 +16,41 @@ spec:
     spec:
       containers:
       - name: my-server
-        image: my-server:v1.1
+        image: 192.168.20.49:30002/myserver/httpserver:v1.1
+        env:
+        - name: CONFIG_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: server-config 
+              key: port
+        - name: CONFIG_LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: server-config
+              key: log_level  
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "700m"
+          requests:
+            memory: "200Mi"
+            cpu: "700m"
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          failureThreshold: 30
+          periodSeconds: 10
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh","-c","ps -ef"]
+
 
